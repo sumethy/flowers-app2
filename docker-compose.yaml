@@ -1,0 +1,27 @@
+version: '2'
+services:
+  flowers:
+    container_name: flowersapp
+    image: flowers-api
+    build: 
+      context: ./app
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
+      - ./data:/data
+    ports:
+      - "8000:8000"
+    command: gunicorn --bind 0.0.0.0:8000 main:app
+
+  nginx:
+    container_name: nginx-flowersapp
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - flowers
+
+  redis:
+    container_name: redis-flowerapp
+    image: redis
